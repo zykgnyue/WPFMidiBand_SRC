@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Sanford.Multimedia.Midi
 {
@@ -307,23 +308,68 @@ namespace Sanford.Multimedia.Midi
             #endregion
 
             Console.WriteLine($"3-Before lock in Stop");
+#if true          
+            #region Gard11
+            var timeout = TimeSpan.FromMilliseconds(500);
+            bool lockTaken = false;
+
+            try
+            {
+                Monitor.TryEnter(lockObject,ref lockTaken);
+                if (lockTaken)
+                {
+                    // The critical section.
+                    Console.WriteLine($"3-in lock in Stop");
+                    #region Guard
+
+                    if (!playing)
+                    {
+                        return;
+                    }
+
+                    #endregion
+
+                    playing = false;
+                    clock.Stop();
+                    stopper.AllSoundOff();
+
+                }
+                else
+                {
+                    // The lock was not acquired.
+                }
+            }
+            finally
+            {
+                // Ensure that the lock is released.
+                if (lockTaken)
+                {
+                    Monitor.Exit(lockObject);
+                }
+            }
+
+            #endregion
+
+#else
+
             lock (lockObject)
             {
                 Console.WriteLine($"3-in lock in Stop");
-                #region Guard
+            #region Guard
 
                 if (!playing)
                 {
                     return;
                 }
 
-                #endregion
+            #endregion
 
                 playing = false;
                 clock.Stop();
                 stopper.AllSoundOff();
             }
             Console.WriteLine($"3-After lock in Stop");
+#endif
 
         }
 
