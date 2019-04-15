@@ -149,6 +149,7 @@ namespace Sanford.Multimedia.Midi
                 }
             }
 
+
             // Eat the header length.
             for(int i = 0; i < 4; i++)
             {
