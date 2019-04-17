@@ -336,6 +336,8 @@ namespace Sanford.Multimedia.Midi
                 }
                 else
                 {
+                    Console.WriteLine($"3-Not get lock in Stop");
+
                     // The lock was not acquired.
                 }
             }
@@ -344,6 +346,8 @@ namespace Sanford.Multimedia.Midi
                 // Ensure that the lock is released.
                 if (lockTaken)
                 {
+                    Console.WriteLine($"3-if locked then Exit lock in Stop");
+
                     Monitor.Exit(lockObject);
                 }
             }
